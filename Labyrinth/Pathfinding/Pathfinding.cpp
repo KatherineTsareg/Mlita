@@ -29,20 +29,14 @@ bool ReadingAndCheckingInputData(ifstream & inputFile, int & fieldSize, int & sh
 	{
 		return false;
 	}
-	else
+	auto sizesFieldAndShip = ReadInputParameters(inputFile);
+	fieldSize = sizesFieldAndShip.first;
+	shipSize = sizesFieldAndShip.second;
+	if (!(shipSize < fieldSize) || !(fieldSize <= 300) || !(shipSize >= 1) || !(fieldSize >= 1))
 	{
-		auto sizesFieldAndShip = ReadInputParameters(inputFile);
-		fieldSize = sizesFieldAndShip.first;
-		shipSize = sizesFieldAndShip.second;
-		if (!(shipSize < fieldSize) || !(fieldSize <= 300) || !(shipSize >= 1) || !(fieldSize >= 1))
-		{
-			return false;
-		}
-		else
-		{
-			return true;
-		}
+		return false;
 	}
+	return true;
 }
 
 void FillingAnArray(ifstream & inputFile, int fieldSize, vector<vector<Field>> & field)
@@ -73,7 +67,7 @@ void FillingAnArray(ifstream & inputFile, int fieldSize, vector<vector<Field>> &
 	}
 }
 
-bool PossibleToMove(vector<vector<Field>> & field, int x, int y, int pred, int shipSize)
+bool PossibleToMove(vector<vector<Field>> const& field, int x, int y, int pred, int shipSize)
 {
 	bool move = true;
 	for (size_t i = y; i < unsigned(shipSize) + y; ++i)
@@ -91,32 +85,32 @@ bool PossibleToMove(vector<vector<Field>> & field, int x, int y, int pred, int s
 
 int CountOfMoves(vector<vector<Field>> & field, int fieldSize, int shipSize)
 {
-	vector<Cell> listOfCellsForChecking;//список для хранения ячеек, которые будем "закрашивать" числами
+	vector<Cell> listOfCellsForChecking;//СЃРїРёСЃРѕРє РґР»СЏ С…СЂР°РЅРµРЅРёСЏ СЏС‡РµРµРє, РєРѕС‚РѕСЂС‹Рµ Р±СѓРґРµРј "Р·Р°РєСЂР°С€РёРІР°С‚СЊ" С‡РёСЃР»Р°РјРё
 	listOfCellsForChecking.push_back(Cell(1, 1, 0));
 	while ((listOfCellsForChecking.size() > 0) && (field[fieldSize - shipSize + 1][fieldSize - shipSize + 1].mark == 0))
 	{
-		Cell cell = listOfCellsForChecking.back();//берем ячейку
-		listOfCellsForChecking.pop_back();//удаляем ее из списка
-		field[cell.y][cell.x].mark = cell.pred + 1;//записываем в ячеку номер хода
-		///просматриваем ячеки рядом, на возможность хода
-		if (PossibleToMove(field, cell.x, (cell.y - shipSize < 0 ? 0 : cell.y - shipSize), cell.pred, shipSize)) //если ход вверх свободен
+		Cell cell = listOfCellsForChecking.back();//Р±РµСЂРµРј СЏС‡РµР№РєСѓ
+		listOfCellsForChecking.pop_back();//СѓРґР°Р»СЏРµРј РµРµ РёР· СЃРїРёСЃРєР°
+		field[cell.y][cell.x].mark = cell.pred + 1;//Р·Р°РїРёСЃС‹РІР°РµРј РІ СЏС‡РµРєСѓ РЅРѕРјРµСЂ С…РѕРґР°
+		///РїСЂРѕСЃРјР°С‚СЂРёРІР°РµРј СЏС‡РµРєРё СЂСЏРґРѕРј, РЅР° РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ С…РѕРґР°
+		if (PossibleToMove(field, cell.x, (cell.y - shipSize < 0 ? 0 : cell.y - shipSize), cell.pred, shipSize)) //РµСЃР»Рё С…РѕРґ РІРІРµСЂС… СЃРІРѕР±РѕРґРµРЅ
 		{ 
-			listOfCellsForChecking.push_back(Cell(cell.x, cell.y - 1, cell.pred + 1)); //добавляем верзнюю ячейку в список
+			listOfCellsForChecking.push_back(Cell(cell.x, cell.y - 1, cell.pred + 1)); //РґРѕР±Р°РІР»СЏРµРј РІРµСЂР·РЅСЋСЋ СЏС‡РµР№РєСѓ РІ СЃРїРёСЃРѕРє
 		}
-		if (PossibleToMove(field, (cell.x - shipSize < 0 ? 0 : cell.x - shipSize), cell.y, cell.pred, shipSize)) // если ход влево свободен
+		if (PossibleToMove(field, (cell.x - shipSize < 0 ? 0 : cell.x - shipSize), cell.y, cell.pred, shipSize)) // РµСЃР»Рё С…РѕРґ РІР»РµРІРѕ СЃРІРѕР±РѕРґРµРЅ
 		{ 
 			listOfCellsForChecking.push_back(Cell(cell.x - 1, cell.y, cell.pred + 1)); 
 		}
-		if (PossibleToMove(field, cell.x, cell.y + 1, cell.pred, shipSize)) //если ход вправо свободен
+		if (PossibleToMove(field, cell.x, cell.y + 1, cell.pred, shipSize)) //РµСЃР»Рё С…РѕРґ РІРїСЂР°РІРѕ СЃРІРѕР±РѕРґРµРЅ
 		{ 
 			listOfCellsForChecking.push_back(Cell(cell.x, cell.y + 1, cell.pred + 1)); 
 		}
-		if (PossibleToMove(field, cell.x + 1, cell.y, cell.pred, shipSize)) //если ход вниз свободен
+		if (PossibleToMove(field, cell.x + 1, cell.y, cell.pred, shipSize)) //РµСЃР»Рё С…РѕРґ РІРЅРёР· СЃРІРѕР±РѕРґРµРЅ
 		{ 
 			listOfCellsForChecking.push_back(Cell(cell.x + 1, cell.y, cell.pred + 1)); 
 		}
 	}
-	return field[fieldSize - shipSize + 1][fieldSize - shipSize + 1].mark - 1; //возвращаем номер хода в конечной ячейке -1, так как начинали индексацию ходов с 1
+	return field[fieldSize - shipSize + 1][fieldSize - shipSize + 1].mark - 1; //РІРѕР·РІСЂР°С‰Р°РµРј РЅРѕРјРµСЂ С…РѕРґР° РІ РєРѕРЅРµС‡РЅРѕР№ СЏС‡РµР№РєРµ -1, С‚Р°Рє РєР°Рє РЅР°С‡РёРЅР°Р»Рё РёРЅРґРµРєСЃР°С†РёСЋ С…РѕРґРѕРІ СЃ 1
 }
 
 void RecordResultInOutputFile(int steps)

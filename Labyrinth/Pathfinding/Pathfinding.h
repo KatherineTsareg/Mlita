@@ -29,7 +29,7 @@ bool ReadingAndCheckingInputData(ifstream & inputFile, int & fieldSize, int & sh
 
 void FillingAnArray(ifstream & inputFile, int fieldSize, vector<vector<Field>> & field);
 
-bool PossibleToMove(vector<vector<Field>> & field, int x, int y, int pred, int shipSize);
+bool PossibleToMove(vector<vector<Field>> const& field, int x, int y, int pred, int shipSize);
 
 int CountOfMoves(vector<vector<Field>> & field, int fieldSize, int shipSize);
 
