@@ -30,15 +30,22 @@
 
 #include "stdafx.h"
 #include "Pathfinding.h"
-
+#include <chrono>
+#include <iostream>
 
 int _tmain()
 {
+	auto pointBefore = std::chrono::system_clock::now();
 	int fieldSize, shipSize;
 	ifstream inputFile("input.txt");
 	if (ReadingAndCheckingInputData(inputFile, fieldSize, shipSize))
 	{
 		Pathfinding_f(inputFile, fieldSize, shipSize);
+
+		auto pointAfter = std::chrono::system_clock::now();
+		auto durationMsec = std::chrono::duration_cast<std::chrono::milliseconds>(pointAfter - pointBefore);
+		std::cerr << "Total time: "<< durationMsec.count()<< "ms" << std::endl;
+		
 		return EXIT_SUCCESS;
 	}
 	else
