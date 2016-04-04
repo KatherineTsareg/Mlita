@@ -60,11 +60,12 @@ void FillingAnArray(ifstream & inputFile, int fieldSize, vector<vector<Field>> &
 		it[0].state = '@';
 		it[fieldSize + 1].state = '@';
 	}
+	
 	string str;
 	size_t i = 1;
-	while ((inputFile >> str) && (i <= fieldSize + 1))
+	while ((inputFile >> str) && (i <= unsigned(fieldSize) + 1))
 	{
-		for (size_t j = 1; j < fieldSize + 1; ++j)
+		for (size_t j = 1; j < unsigned(fieldSize) + 1; ++j)
 		{
 			field[i][j].state = str[j - 1];
 		}
@@ -75,9 +76,9 @@ void FillingAnArray(ifstream & inputFile, int fieldSize, vector<vector<Field>> &
 bool PossibleToMove(vector<vector<Field>> & field, int x, int y, int pred, int shipSize)
 {
 	bool move = true;
-	for (size_t i = y; i < shipSize + y; ++i)
+	for (size_t i = y; i < unsigned(shipSize) + y; ++i)
 	{
-		for (size_t j = x; j < shipSize + x; ++j)
+		for (size_t j = x; j < unsigned(shipSize) + x; ++j)
 		{
 			if ((field[i][j].state == '@') || ((field[i][j].mark < pred + 1) && (field[i][j].mark != 0)))
 			{
