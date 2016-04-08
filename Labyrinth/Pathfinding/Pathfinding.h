@@ -14,13 +14,12 @@ struct Field
 
 struct Cell {
 	int x, y, previousStep;
-	Cell(int input_x, int input_y, int input_prevStep)
+	Cell(int x, int y, int prevStep)
+		:x(x)
+		,y(y)
+		,previousStep(prevStep)
 	{
-		x = input_x;
-		y = input_y;
-		previousStep = input_prevStep;
 	}
-	
 };
 
 pair<int, int> ReadInputParameters(ifstream & file);
