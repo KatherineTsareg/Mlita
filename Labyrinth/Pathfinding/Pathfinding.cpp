@@ -67,7 +67,7 @@ void FillingAnArray(ifstream & inputFile, int fieldSize, vector<vector<Field>> &
 	}
 }
 
-bool PossibleToMove(vector<vector<Field>> const& field, int x, int y, int pred, int shipSize)
+bool IsMoveExist(vector<vector<Field>> const& field, int x, int y, int pred, int shipSize)
 {
 	bool move = true;
 	for (size_t i = y; i < unsigned(shipSize) + y; ++i)
@@ -83,7 +83,7 @@ bool PossibleToMove(vector<vector<Field>> const& field, int x, int y, int pred, 
 	return move;
 }
 
-int CountOfMoves(vector<vector<Field>> & field, int fieldSize, int shipSize)
+int CalculateTheSteps(vector<vector<Field>> & field, int fieldSize, int shipSize)
 {
 	vector<Cell> listOfCellsForChecking;//список для хранения ячеек, которые будем "закрашивать" числами
 	listOfCellsForChecking.push_back(Cell(1, 1, 0));
@@ -91,23 +91,23 @@ int CountOfMoves(vector<vector<Field>> & field, int fieldSize, int shipSize)
 	{
 		Cell cell = listOfCellsForChecking.back();//берем ячейку
 		listOfCellsForChecking.pop_back();//удаляем ее из списка
-		field[cell.y][cell.x].mark = cell.pred + 1;//записываем в ячеку номер хода
+		field[cell.y][cell.x].mark = cell.previousStep + 1;//записываем в ячеку номер хода
 		///просматриваем ячеки рядом, на возможность хода
-		if (PossibleToMove(field, cell.x, (cell.y - shipSize < 0 ? 0 : cell.y - shipSize), cell.pred, shipSize)) //если ход вверх свободен
+		if (IsMoveExist(field, cell.x, (cell.y - shipSize < 0 ? 0 : cell.y - shipSize), cell.previousStep, shipSize)) //если ход вверх свободен
 		{ 
-			listOfCellsForChecking.push_back(Cell(cell.x, cell.y - 1, cell.pred + 1)); //добавляем верзнюю ячейку в список
+			listOfCellsForChecking.push_back(Cell(cell.x, cell.y - 1, cell.previousStep + 1)); //добавляем верзнюю ячейку в список
 		}
-		if (PossibleToMove(field, (cell.x - shipSize < 0 ? 0 : cell.x - shipSize), cell.y, cell.pred, shipSize)) // если ход влево свободен
+		if (IsMoveExist(field, (cell.x - shipSize < 0 ? 0 : cell.x - shipSize), cell.y, cell.previousStep, shipSize)) // если ход влево свободен
 		{ 
-			listOfCellsForChecking.push_back(Cell(cell.x - 1, cell.y, cell.pred + 1)); 
+			listOfCellsForChecking.push_back(Cell(cell.x - 1, cell.y, cell.previousStep + 1));
 		}
-		if (PossibleToMove(field, cell.x, cell.y + 1, cell.pred, shipSize)) //если ход вправо свободен
+		if (IsMoveExist(field, cell.x, cell.y + 1, cell.previousStep, shipSize)) //если ход вправо свободен
 		{ 
-			listOfCellsForChecking.push_back(Cell(cell.x, cell.y + 1, cell.pred + 1)); 
+			listOfCellsForChecking.push_back(Cell(cell.x, cell.y + 1, cell.previousStep + 1));
 		}
-		if (PossibleToMove(field, cell.x + 1, cell.y, cell.pred, shipSize)) //если ход вниз свободен
+		if (IsMoveExist(field, cell.x + 1, cell.y, cell.previousStep, shipSize)) //если ход вниз свободен
 		{ 
-			listOfCellsForChecking.push_back(Cell(cell.x + 1, cell.y, cell.pred + 1)); 
+			listOfCellsForChecking.push_back(Cell(cell.x + 1, cell.y, cell.previousStep + 1));
 		}
 	}
 	return field[fieldSize - shipSize + 1][fieldSize - shipSize + 1].mark - 1; //возвращаем номер хода в конечной ячейке -1, так как начинали индексацию ходов с 1
@@ -120,7 +120,7 @@ void RecordResultInOutputFile(int steps)
 	outputFile.close();
 }
 
-void Pathfinding_f(ifstream & inputFile, int fieldSize, int shipSize)
+void FindingPath(ifstream & inputFile, int fieldSize, int shipSize)
 {
 	vector<vector<Field>> field(302);
 	for (auto & row : field)
@@ -128,5 +128,5 @@ void Pathfinding_f(ifstream & inputFile, int fieldSize, int shipSize)
 		row.resize(302);
 	}
 	FillingAnArray(inputFile, fieldSize, field);
-	RecordResultInOutputFile(CountOfMoves(field, fieldSize, shipSize));
+	RecordResultInOutputFile(CalculateTheSteps(field, fieldSize, shipSize));
 }

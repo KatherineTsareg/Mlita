@@ -22,7 +22,7 @@ void ResultOfProgram(ifstream  & fin)
 	int fieldSize, shipSize;
 	if (ReadingAndCheckingInputData(fin, fieldSize, shipSize))
 	{
-		Pathfinding_f(fin, fieldSize, shipSize);
+		FindingPath(fin, fieldSize, shipSize);
 	}
 }
 

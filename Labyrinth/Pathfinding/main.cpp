@@ -40,7 +40,7 @@ int _tmain()
 	ifstream inputFile("input.txt");
 	if (ReadingAndCheckingInputData(inputFile, fieldSize, shipSize))
 	{
-		Pathfinding_f(inputFile, fieldSize, shipSize);
+		FindingPath(inputFile, fieldSize, shipSize);
 
 		auto pointAfter = std::chrono::system_clock::now();
 		auto durationMsec = std::chrono::duration_cast<std::chrono::milliseconds>(pointAfter - pointBefore);
