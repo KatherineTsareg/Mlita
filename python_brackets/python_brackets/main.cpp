@@ -13,7 +13,7 @@ int main(int argc, char * argv[])
 	{
 		ifstream inputFile(argv[1]);
 		CPythonCode pythonText(inputFile);
-		if (pythonText.ReadInputData())
+		if (pythonText.CodeVerification())
 		{
 			cout << "YES" << endl;
 		}

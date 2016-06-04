@@ -8,7 +8,7 @@ CPythonCode::CPythonCode(std::ifstream & inputFile)
 {
 }
 
-bool CPythonCode::ReadInputData()
+bool CPythonCode::CodeVerification()
 {
 	if (m_inputFile.is_open())
 	{
@@ -26,40 +26,87 @@ bool CPythonCode::ReadInputData()
 	return false;
 }
 
+void CPythonCode::SetState()
+{
+	if ((m_quotesCount == 3) && (m_commentState == 2))
+	{
+		m_commentState = 0;
+		m_quotesCount = 0;
+	}
+	else if ((m_quotesCount == 1) && (m_commentState == 0))
+	{
+		m_commentState = 1;
+	}
+	else if ((m_quotesCount == 1) && (m_commentState == 1))
+	{
+		m_commentState = 0;
+		m_quotesCount = 0;
+	}
+	else if ((m_quotesCount == 3) && (m_commentState == 1))
+	{
+		m_commentState = 2;
+		m_quotesCount = 0;
+	}
+	else if ((m_quotesCount == 3) && (m_commentState == 2))
+	{
+		m_commentState = 0;
+		m_quotesCount = 0;
+	}
+}
+
+void CPythonCode::SetStateAfterSomeLetter()
+{
+	if ((m_quotesCount == 2) && (m_commentState == 1))
+	{
+		m_commentState = 0;
+		m_quotesCount = 0;
+	}
+	else if ((m_commentState == 2) && (m_quotesCount == 1))
+	{
+		m_quotesCount = 0;
+	}
+}
+
 bool CPythonCode::BracketsChecking(string const& inputStr)
 {
 	m_letterCount = 1;
-	for (char letter : inputStr)
+	for (char sign : inputStr)
 	{
-		auto it = find(begin(m_closing_brackets), end(m_closing_brackets), letter);
-		
-		if ((letter == '"') || (letter == '"""'))
+		auto it = find(begin(m_closing_brackets), end(m_closing_brackets), sign);
+		if (sign == '"')
 		{
-			m_commentState = m_commentState ? false : true;
+			++m_quotesCount;
+			SetState();
 		}
-		else if ((letter == '#') && !m_commentState)
+		else if ((sign == '#') && (m_commentState == 0))
 		{
 			break;
 		}
-		else if ((find(begin(m_opening_brackets), end(m_opening_brackets), letter) != end(m_opening_brackets)) && !m_commentState)
+		else if ((find(begin(m_opening_brackets), end(m_opening_brackets), sign) != end(m_opening_brackets)) && (m_commentState == 0))
 		{
-			m_brackets.push(letter);
+			m_brackets.push(sign);
 		}
-		else if ((it != end(m_closing_brackets)) && !m_commentState)
+		else if ((it != end(m_closing_brackets)) && ((m_commentState == 0) || (m_quotesCount == 2) && (m_commentState == 1)))
 		{
 			if (m_opening_brackets[it - begin(m_closing_brackets)] == m_brackets.top())
 			{
 				m_brackets.pop();
+				SetStateAfterSomeLetter();
 			}
 			else
 			{
 				return false; //Error in bracket sequence
 			}
 		}
+		else
+		{
+			SetStateAfterSomeLetter();
+		}
 		++m_letterCount;
 	}
 	return true;
 }
+
 
 CPythonCode::~CPythonCode()
 {
