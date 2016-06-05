@@ -1,0 +1,5 @@
+const map = {'hello':'bye', 'bye':'hello'}
+const list = ['gif', 'bmp', 'jpg', 'jpeg', 'png', 'js', 'css', 'html', 'ico']
+
+name = raw_input("Please, enter your name: ")
+print("Hello, ", name)
