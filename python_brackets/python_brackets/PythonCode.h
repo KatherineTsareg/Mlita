@@ -18,7 +18,7 @@ private:
 	std::ifstream & m_inputFile;
 	std::stack<char> m_brackets;
 	int m_quotesCount = 0;
-	const enum { NOTHING, LITERAL, MILTILINE };
-	int m_commentState = NOTHING;
+	const enum STATE { NOTHING, LITERAL, MILTILINE };
+	int m_commentState = STATE::NOTHING;
 };
 
