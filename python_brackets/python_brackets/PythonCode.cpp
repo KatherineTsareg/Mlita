@@ -47,11 +47,6 @@ void CPythonCode::SetState()
 		m_commentState = STATE::MILTILINE;
 		m_quotesCount = 0;
 	}
-	else if ((m_quotesCount == 3) && (m_commentState == STATE::MILTILINE))
-	{
-		m_commentState = STATE::NOTHING;
-		m_quotesCount = 0;
-	}
 }
 
 void CPythonCode::SetStateAfterSomeLetter()
