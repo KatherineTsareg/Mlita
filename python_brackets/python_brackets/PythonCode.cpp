@@ -28,40 +28,40 @@ bool CPythonCode::CodeVerification()
 
 void CPythonCode::SetState()
 {
-	if ((m_quotesCount == 3) && (m_commentState == 2))
+	if ((m_quotesCount == 3) && (m_commentState == MILTILINE))
 	{
-		m_commentState = 0;
+		m_commentState = NOTHING;
 		m_quotesCount = 0;
 	}
-	else if ((m_quotesCount == 1) && (m_commentState == 0))
+	else if ((m_quotesCount == 1) && (m_commentState == NOTHING))
 	{
-		m_commentState = 1;
+		m_commentState = LITERAL;
 	}
-	else if ((m_quotesCount == 1) && (m_commentState == 1))
+	else if ((m_quotesCount == 1) && (m_commentState == LITERAL))
 	{
-		m_commentState = 0;
+		m_commentState = NOTHING;
 		m_quotesCount = 0;
 	}
-	else if ((m_quotesCount == 3) && (m_commentState == 1))
+	else if ((m_quotesCount == 3) && (m_commentState == LITERAL))
 	{
-		m_commentState = 2;
+		m_commentState = MILTILINE;
 		m_quotesCount = 0;
 	}
-	else if ((m_quotesCount == 3) && (m_commentState == 2))
+	else if ((m_quotesCount == 3) && (m_commentState == MILTILINE))
 	{
-		m_commentState = 0;
+		m_commentState = NOTHING;
 		m_quotesCount = 0;
 	}
 }
 
 void CPythonCode::SetStateAfterSomeLetter()
 {
-	if ((m_quotesCount == 2) && (m_commentState == 1))
+	if ((m_quotesCount == 2) && (m_commentState == LITERAL))
 	{
-		m_commentState = 0;
+		m_commentState = NOTHING;
 		m_quotesCount = 0;
 	}
-	else if ((m_commentState == 2) && (m_quotesCount == 1))
+	else if ((m_commentState == MILTILINE) && (m_quotesCount == 1))
 	{
 		m_quotesCount = 0;
 	}
@@ -78,15 +78,15 @@ bool CPythonCode::BracketsChecking(string const& inputStr)
 			++m_quotesCount;
 			SetState();
 		}
-		else if ((sign == '#') && (m_commentState == 0))
+		else if ((sign == '#') && (m_commentState == NOTHING))
 		{
 			break;
 		}
-		else if ((find(begin(m_opening_brackets), end(m_opening_brackets), sign) != end(m_opening_brackets)) && (m_commentState == 0))
+		else if ((find(begin(m_opening_brackets), end(m_opening_brackets), sign) != end(m_opening_brackets)) && (m_commentState == NOTHING))
 		{
 			m_brackets.push(sign);
 		}
-		else if ((it != end(m_closing_brackets)) && ((m_commentState == 0) || (m_quotesCount == 2) && (m_commentState == 1)))
+		else if ((it != end(m_closing_brackets)) && ((m_commentState == NOTHING) || (m_quotesCount == 2) && (m_commentState == LITERAL)))
 		{
 			if (m_opening_brackets[it - begin(m_closing_brackets)] == m_brackets.top())
 			{
